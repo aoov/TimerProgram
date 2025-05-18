@@ -7,3 +7,6 @@ if a key is bound to a timer, the timer will continue playing the sound until th
 Requires admin mode
 
 Original purpose - help keep uptime when farming in maplestory
+
+
+Uses: nicegui, pynput, pygame - packaged using pyinstaller

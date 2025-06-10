@@ -38,24 +38,25 @@ def resource_path(relative_path: str) -> str:
 class TimerCard:
     def __init__(self, card_id: int, parent_grid, get_last_keypress,
                  set_last_keypress, on_remove=None, on_enable=None, on_disable=None,
-                 manual_reset=None):
+                 manual_reset=None, number = 0, volume=100, key=None, file_path=None, name="Generic"):
         self.card_id = card_id
         self.name_input = None
         self.file_label = None
-        self.file_path = None
+        self.file_path = file_path
         self.slider = None
         self.volume_label = None
         self.enabled = False
-        self.key = None
+        self.key = key
         self.number_input = None
-        self.number = 0
-        self.volume = 100
+        self.number = number
+        self.volume = volume
         self.on_remove = on_remove
         self.on_enable = on_enable
         self.on_disable = on_disable
         self.get_last_keypress = get_last_keypress
         self.set_last_keypress = set_last_keypress
         self.manual_reset = manual_reset
+        self.name = name
 
         with parent_grid:
             self.card = ui.card()
@@ -66,9 +67,9 @@ class TimerCard:
                                             on_change=lambda e: self.toggle(e.value),
                                             value=self.enabled)
                 with ui.row().classes("w-full"):
-                    self.name_input = ui.input(label="Name")
+                    self.name_input = ui.input(label="Name", value=self.name)
                     self.number_input = ui.number(label="Seconds", min=0, step=1, format='%.0f',
-                                                  on_change=lambda e: self.setValue(e.value))
+                                                  value=self.number,on_change=lambda e: self.setValue(e.value))
                 with ui.row().classes(""):
                     self.sound_label = ui.label('Sound: ')
                     self.file_label = ui.label('Default Sound')
@@ -76,9 +77,16 @@ class TimerCard:
                     self.volume_label = ui.label('100%')
                     self.slider = ui.slider(min=0, max=100, step=1, value=self.volume,
                                             on_change=lambda e: self.update_volume(e.value))
+                    if self.volume != 100:
+                        self.update_volume(self.volume)
                 with ui.row().classes("w-full"):
                     self.pick_file_button = ui.button('Pick Sound', on_click=self.pick_file)
+                    if self.file_path is not None:
+                        file_name = Path(self.file_path).name
+                        self.file_label.text = file_name
                     self.bind_button = ui.button("Bind Key", on_click=self.wait_for_key)
+                    if self.key is not None:
+                        self.bind_button.set_text("Bound: " + str(self.key))
                     self.manual_reset_button = ui.button("Reset", on_click=self.reset)
                 self.remove_button = ui.button(on_click=self.remove, icon="clear")
 
@@ -153,10 +161,22 @@ class TimerCard:
             return False
         return True
 
-    def get_timer(self):
+    def get_timer(self, toaster, useWindows):
         if not self.validate():
             return None
         if self.file_path is None:
             self.file_path = resource_path("retro.wav")
 
-        return Timer(self.number, self, key=self.key, sound_path=self.file_path, volume=self.volume)
+        return Timer(self.number, self, key=self.key, sound_path=self.file_path,
+                     volume=self.volume, use_notification=useWindows, toaster=toaster)
+
+    def to_dict(self):
+        return {
+            'name': self.name_input.value,
+            'interval': self.number,
+            'volume': self.volume,
+            'file_path': self.file_path,
+            'key': str(self.key),
+        }
+
+

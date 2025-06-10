@@ -10,3 +10,9 @@ Original purpose - help keep uptime when farming in maplestory
 
 
 Uses: nicegui, pynput, pygame - packaged using pyinstaller
+
+Build command: 
+```bash
+pyinstaller --name Timer --onefile --uac-admin --add-data "retro.wav;." --add-data "C:\Users\xryda\AppData\Local\Programs\Python\Python312\Lib\site-packages\nicegui;nicegui" main.py
+```
+

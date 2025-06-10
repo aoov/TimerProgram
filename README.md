@@ -13,6 +13,6 @@ Uses: nicegui, pynput, pygame - packaged using pyinstaller
 
 Build command: 
 ```bash
-pyinstaller --name Timer --onefile --uac-admin --add-data "retro.wav;." --add-data "C:\Users\xryda\AppData\Local\Programs\Python\Python312\Lib\site-packages\nicegui;nicegui" main.py
+pyinstaller --name Timer --onefile --icon=clock.ico --uac-admin --add-data "retro.wav;." --add-data "clock.ico;." --add-data "C:\Users\xryda\AppData\Local\Programs\Python\Python312\Lib\site-packages\nicegui;nicegui" main.py
 ```
 

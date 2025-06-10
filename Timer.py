@@ -6,7 +6,24 @@ from pynput.keyboard import Key, Listener
 import time
 import threading
 
-from win10toast import ToastNotifier
+def resource_path(relative_path: str) -> str:
+    """
+    Get absolute path to resource, works for dev and for PyInstaller.
+
+    Args:
+        relative_path: Path to the resource relative to the project or bundle.
+
+    Returns:
+        An absolute path that works whether the app is frozen (e.g., with PyInstaller) or not.
+    """
+    try:
+        # If the app is run from a PyInstaller bundle
+        base_path = sys._MEIPASS
+    except AttributeError:
+        # Otherwise, use the current directory
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 class Timer:
@@ -90,6 +107,6 @@ class Timer:
             self.timer_name,  # Title of the notification
             "Key: " + str(self.key),  # Message of the notification
             duration=self.sound_time,  # How long the notification should remain (seconds)
-            icon_path=None,  # Optional: Path to a custom icon
+            icon_path=resource_path("clock.ico"),  # Optional: Path to a custom icon
             threaded=True  # Run in a separate thread (won't block your program)
         )
